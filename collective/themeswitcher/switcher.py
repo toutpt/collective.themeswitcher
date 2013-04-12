@@ -42,6 +42,9 @@ class RegistryThemeSwitcher(BrowserView):
             KEY = "collective.themeswitcher.switcher"
             default = u"themeswitcher_default"
             name = self.portal_registry.get(KEY, default)
+            if not name:
+                #don't break even if the value of is None
+                name = default
             context = (self.context, self.request)
             self.switcher = component.getMultiAdapter(context, name=name)
 
@@ -82,6 +85,7 @@ class MobileThemeSwitcher(PloneThemeSwitcher):
         self.portal_registry = None
         self.portal_skins = None
         self.theme = None
+        self.available_themes = None
 
     def isMobile(self):
         if self._is_mobile is None:
@@ -102,6 +106,8 @@ class MobileThemeSwitcher(PloneThemeSwitcher):
         if self.theme is None:
             KEY = "collective.themeswitcher.theme.mobile"
             self.theme = self.portal_registry.get(KEY, None)
+        if self.available_themes is None:
+            self.available_themes = [t.__name__ for t in getAvailableThemes()]
 
     def getDefaultSkin(self, old):
         if not self.isMobile():
@@ -119,9 +125,9 @@ class MobileThemeSwitcher(PloneThemeSwitcher):
         self.update()
         if self.theme is None:
             return old()
-        if self.theme not in getAvailableThemes():
+        if self.theme not in self.available_themes:
             return old()
         settings = self.portal_registry.forInterface(IThemeSettings,
-                                                     check=False
+                                                     check=False,
                                                      prefix="switcher")
         return settings

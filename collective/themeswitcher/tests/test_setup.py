@@ -26,6 +26,14 @@ class TestSetup(base.IntegrationTestCase):
         self.assertEqual(ThemeTransform.getSettings.__module__,
                          'collective.themeswitcher.ThemeTransform')
 
+    def test_upgrades(self):
+        profile = 'collective.themeswitcher:default'
+        setup = self.portal.portal_setup
+        upgrades = setup.listUpgrades(profile, show_old=True)
+        self.assertTrue(len(upgrades) > 0)
+        for upgrade in upgrades:
+            upgrade['step'].doStep(setup)
+
 
 def test_suite():
     return unittest.defaultTestLoader.loadTestsFromName(__name__)

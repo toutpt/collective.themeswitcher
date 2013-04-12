@@ -128,7 +128,7 @@ class MobileThemeSwitcher(PloneThemeSwitcher):
             if user_agent is not None:
                 b = self.reg_b.search(user_agent)
                 v = self.reg_v.search(user_agent[0:4])
-                self._is_mobile = b or v
+                self._is_mobile = bool(b or v)
             else:
                 self._is_mobile = False
         return self._is_mobile

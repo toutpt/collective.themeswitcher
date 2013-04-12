@@ -143,6 +143,22 @@ class IntegrationTestPloneThemeSwitcher(base.IntegrationTestCase):
             self.assertTrue(hasattr(settings, attr))
 
 
+#some user agent
+TEST_MOBILE_UA = [
+    "Mozilla/5.0 (iPhone; CPU iPhone OS 5_0 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9A334 Safari/7534.48.3",
+    "Mozilla/5.0 (iPad; U; CPU iPhone OS 3_2 like Mac OS X; en-us) AppleWebKit/531.21.10 (KHTML, like Gecko) Mobile/7D11",
+    "Mozilla/5.0 (Linux; U; Android 2.2; en-us; Nexus One Build/FRF91) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1",
+]
+
+TEST_DESKTOP_UA = [
+    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.8; rv:19.0) Gecko/20100101 Firefox/19.0",
+    "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1)",
+    "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; .NET CLR 1.1.4322)",
+    "Opera/9.20 (Windows NT 6.0; U; en)",
+    "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.75 Safari/537.1",
+]
+
+
 class UnitTestMobileThemeSwitcher(base.UnitTestCase):
 
     def setUp(self):
@@ -159,12 +175,20 @@ class UnitTestMobileThemeSwitcher(base.UnitTestCase):
         self.assertNotEqual(self.switcher.theme, "plonetheme.mobile")
         #reset cache
         self.switcher._is_mobile = None
-        self.request["HTTP_USER_AGENT"] = "Mozilla/5.0 (iPhone; CPU iPhone OS 5_0 like Mac OS X) AppleWebKit/534.46 (KHTML, like Gecko) Version/5.1 Mobile/9A334 Safari/7534.48.3"
+        self.request["HTTP_USER_AGENT"] = TEST_MOBILE_UA[0]
         self.switcher.update()
         self.assertEqual(self.switcher.theme, "plonetheme.mobile")
 
     def test_isMobile(self):
-        pass
+        for UA in TEST_MOBILE_UA:
+            self.switcher._is_mobile = None
+            self.request["HTTP_USER_AGENT"] = UA
+            self.assertTrue(self.switcher.isMobile(), UA)
+
+        for UA in TEST_DESKTOP_UA:
+            self.switcher._is_mobile = None
+            self.request["HTTP_USER_AGENT"] = UA
+            self.assertFalse(self.switcher.isMobile(), UA)
 
 
 def test_suite():

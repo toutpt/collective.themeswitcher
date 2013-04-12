@@ -1,0 +1,16 @@
+<registry>
+
+    <record name="collective.themeswitcher.theme.mobile">
+        <field type="plone.registry.field.ASCIILine">
+            <title>Mobile theme</title>
+        </field>
+    </record>
+
+    <record name="collective.themeswitcher.switcher">
+        <field type="plone.registry.field.TextLine">
+            <title>Theme switcher</title>
+            <description>The named switcher that will be used</description>
+        </field>
+    </record>
+
+</registry>

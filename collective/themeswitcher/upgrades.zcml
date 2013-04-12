@@ -1,0 +1,14 @@
+<configure
+    xmlns="http://namespaces.zope.org/genericsetup"
+    i18n_domain="collective.themeswitcher">
+
+    <upgradeStep
+        source="*"
+        destination="1001"
+        title="Upgrade"
+        description=""
+        profile="collective.themeswitcher:default"
+        handler=".upgrades.common"
+        />
+
+</configure>

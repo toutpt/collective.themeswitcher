@@ -1,0 +1,57 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:five="http://namespaces.zope.org/five"
+    xmlns:cmf="http://namespaces.zope.org/cmf"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    xmlns:monkey="http://namespaces.plone.org/monkey"
+    xmlns:plone="http://namespaces.plone.org/plone"
+    i18n_domain="collective.themeswitcher">
+
+  <i18n:registerTranslations directory="locales" />
+
+  <include package="collective.monkeypatcher" />
+  <monkey:patch
+      description="make Products.CMFPlone.SkinsTool switchable"
+      class="Products.CMFPlone.SkinsTool.SkinsTool"
+      original="getDefaultSkin"
+      replacement=".SkinsTool.getDefaultSkin"
+      preserveOriginal="True"
+      />
+  <monkey:patch
+      description="make plone.app.theming.transform.ThemeTransform switchable"
+      class="plone.app.theming.transform.ThemeTransform"
+      original="getSettings"
+      replacement=".ThemeTransform.getSettings"
+      preserveOriginal="True"
+      />
+  <genericsetup:registerProfile
+      name="default"
+      title="collective.themeswitcher"
+      directory="profiles/default"
+      description='Extension profile'
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      />
+  <include file="upgrades.zcml" />
+
+  <browser:page
+      for="*"
+      name="themeswitcher"
+      class=".switcher.RegistryThemeSwitcher"
+      permission="zope2.View"
+      />
+  <browser:page
+      for="*"
+      name="themeswitcher_default"
+      class=".switcher.PloneThemeSwitcher"
+      permission="zope2.View"
+      />
+  <browser:page
+      for="*"
+      name="themeswitcher_mobile"
+      class=".switcher.MobileThemeSwitcher"
+      permission="zope2.View"
+      />
+
+</configure>

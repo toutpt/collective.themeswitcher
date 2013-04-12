@@ -7,8 +7,24 @@ class TestSetup(base.IntegrationTestCase):
     stuff in profile are well activated (browserlayer, js, content types, ...)
     """
 
-    def test_xxx(self):
-        self.assertTrue(False)
+    def test_registry(self):
+        registry = self.portal.portal_registry
+        keys = ('theme.mobile', 'switcher', 'rules', 'absolutePrefix',
+                'currentTheme', 'doctype', 'enabled', 'readNetwork',
+                'parameterExpressions', 'hostnameBlacklist')
+        prefix = 'collective.themeswitcher'
+        marker = object()
+        for key in keys:
+            rkey = '.'.join((prefix, key))
+            value = registry.get(rkey, marker)
+            self.assertNotEqual(value, marker)
+
+    def test_monkeypatch(self):
+        self.assertEqual(self.portal.portal_skins.getDefaultSkin.__module__,
+                         'collective.themeswitcher.SkinsTool')
+        from plone.app.theming.transform import ThemeTransform
+        self.assertEqual(ThemeTransform.getSettings.__module__,
+                         'collective.themeswitcher.ThemeTransform')
 
 
 def test_suite():

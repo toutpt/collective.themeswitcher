@@ -1,12 +1,22 @@
 import transaction
 import unittest2 as unittest
 from collective.themeswitcher import testing
+from collective.themeswitcher.tests.fake import FakeContext, Request
 
 
 class UnitTestCase(unittest.TestCase):
 
     def setUp(self):
-        pass
+        self.portal = FakeContext()
+        self.request = Request()
+
+        def _old_settings():
+            return 'old settings'
+        self._old_settings = _old_settings
+
+        def _old_getDefaultSkin():
+            return 'old default skin'
+        self._old_getDefaultSkin = _old_getDefaultSkin
 
 
 class IntegrationTestCase(unittest.TestCase):
@@ -16,10 +26,15 @@ class IntegrationTestCase(unittest.TestCase):
     def setUp(self):
         super(IntegrationTestCase, self).setUp()
         self.portal = self.layer['portal']
-        testing.setRoles(self.portal, testing.TEST_USER_ID, ['Manager'])
-        self.portal.invokeFactory('Folder', 'test-folder')
-        testing.setRoles(self.portal, testing.TEST_USER_ID, ['Member'])
-        self.folder = self.portal['test-folder']
+        self.request = self.layer['request']
+
+        def _old_settings():
+            return 'old settings'
+        self._old_settings = _old_settings
+
+        def _old_getDefaultSkin():
+            return 'old default skin'
+        self._old_getDefaultSkin = _old_getDefaultSkin
 
 
 class FunctionalTestCase(IntegrationTestCase):

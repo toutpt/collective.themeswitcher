@@ -71,34 +71,25 @@ class PloneThemeSwitcher(BrowserView):
         self.context = context
         self.request = request
         self.portal_registry = None
-        self.portal_skins = None
-        self.theme = None
+        self.theme = None  # the theme to switch to
         self.available_themes = None
-
-    def isMobile(self):
-        if self._is_mobile is None:
-            if 'HTTP_USER_AGENT' in self.request:
-                user_agent = self.request.get('HTTP_USER_AGENT')
-                b = self.reg_b.search(user_agent)
-                v = self.reg_v.search(user_agent[0:4])
-                self._is_mobile = b or v
-            else:
-                self._is_mobile = False
-        return self._is_mobile
+        self.available_skins = None
+        self.diazo_settings = None
 
     def update(self):
         if self.portal_registry is None:
             self.portal_registry = component.queryUtility(IRegistry)
-        if self.portal_skins is None:
-            self.portal_skins = getToolByName(self.context, 'portal_skins')
         if self.available_themes is None:
             self.available_themes = [t.__name__ for t in getAvailableThemes()]
+        if self.available_skins is None:
+            portal_skins = getToolByName(self.context, 'portal_skins')
+            self.available_skins = portal_skins.getSkinSelections()
 
     def getDefaultSkin(self, old):
         self.update()
         if self.theme is None:
             return old()
-        if self.theme not in self.portal_skins.getSkinSelections():
+        if self.theme not in self.available_skins:
             return old()
         return self.theme
 
@@ -108,10 +99,13 @@ class PloneThemeSwitcher(BrowserView):
             return old()
         if self.theme not in self.available_themes:
             return old()
-        settings = self.portal_registry.forInterface(IThemeSettings,
-                                                     check=False,
-                                                     prefix="switcher")
-        return settings
+        if self.diazo_settings is None:
+            prefix = "collective.themeswitcher"
+            forInterface = self.portal_registry.forInterface
+            self.diazo_settings = forInterface(IThemeSettings,
+                                               check=False,
+                                               prefix=prefix)
+        return self.diazo_settings
 
 
 class MobileThemeSwitcher(PloneThemeSwitcher):
@@ -123,7 +117,18 @@ class MobileThemeSwitcher(PloneThemeSwitcher):
         self._is_mobile = None
 
     def update(self):
-        PloneThemeSwitcher.update()
+        PloneThemeSwitcher.update(self)
         if self.theme is None and self.isMobile():
             KEY = "collective.themeswitcher.theme.mobile"
             self.theme = self.portal_registry.get(KEY, None)
+
+    def isMobile(self):
+        if self._is_mobile is None:
+            user_agent = self.request.get('HTTP_USER_AGENT', None)
+            if user_agent is not None:
+                b = self.reg_b.search(user_agent)
+                v = self.reg_v.search(user_agent[0:4])
+                self._is_mobile = b or v
+            else:
+                self._is_mobile = False
+        return self._is_mobile

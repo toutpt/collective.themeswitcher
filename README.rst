@@ -75,7 +75,7 @@ you have to add a registry.xml with::
     </field>
     <value>themeswitcher_mobile</value>
   </record>
-  <record name="switcher.absolutePrefix" interface="plone.app.theming.interfaces.IThemeSettings" field="absolutePrefix">
+  <record name="collective.themeswitcher.absolutePrefix" interface="plone.app.theming.interfaces.IThemeSettings" field="absolutePrefix">
     <field type="plone.registry.field.TextLine">
       <description>convert_relative_url</description>
       <required>False</required>
@@ -83,14 +83,14 @@ you have to add a registry.xml with::
     </field>
     <value>/++theme++plonetheme.mobile</value>
   </record>
-  <record name="switcher.currentTheme" interface="plone.app.theming.interfaces.IThemeSettings" field="currentTheme">
+  <record name="collective.themeswitcher.currentTheme" interface="plone.app.theming.interfaces.IThemeSettings" field="currentTheme">
     <field type="plone.registry.field.TextLine">
       <description>current_theme_description</description>
       <title>current_theme</title>
     </field>
     <value>plonetheme.mobile</value>
   </record>
-  <record name="switcher.doctype" interface="plone.app.theming.interfaces.IThemeSettings" field="doctype">
+  <record name="collective.themeswitcher.doctype" interface="plone.app.theming.interfaces.IThemeSettings" field="doctype">
     <field type="plone.registry.field.ASCIILine">
       <default></default>
       <description>doctype_description</description>
@@ -99,7 +99,7 @@ you have to add a registry.xml with::
     </field>
     <value>&lt;!DOCTYPE html&gt;</value>
   </record>
-  <record name="switcher.enabled" interface="plone.app.theming.interfaces.IThemeSettings" field="enabled">
+  <record name="collective.themeswitcher.enabled" interface="plone.app.theming.interfaces.IThemeSettings" field="enabled">
     <field type="plone.registry.field.Bool">
       <default>False</default>
       <description>enable_theme_globally</description>
@@ -107,7 +107,7 @@ you have to add a registry.xml with::
     </field>
     <value>True</value>
   </record>
-  <record name="switcher.hostnameBlacklist" interface="plone.app.theming.interfaces.IThemeSettings" field="hostnameBlacklist">
+  <record name="collective.themeswitcher.hostnameBlacklist" interface="plone.app.theming.interfaces.IThemeSettings" field="hostnameBlacklist">
     <field type="plone.registry.field.List">
       <default>
         <element>127.0.0.1</element>
@@ -121,7 +121,7 @@ you have to add a registry.xml with::
       <element>127.0.0.1</element>
     </value>
   </record>
-  <record name="switcher.parameterExpressions" interface="plone.app.theming.interfaces.IThemeSettings" field="parameterExpressions">
+  <record name="collective.themeswitcher.parameterExpressions" interface="plone.app.theming.interfaces.IThemeSettings" field="parameterExpressions">
     <field type="plone.registry.field.Dict">
       <default/>
       <description>parameter_expressions_description</description>
@@ -134,7 +134,7 @@ you have to add a registry.xml with::
       <element key="ajax_load">python: request.form.get('ajax_load')</element>
     </value>
   </record>
-  <record name="switcher.readNetwork" interface="plone.app.theming.interfaces.IThemeSettings" field="readNetwork">
+  <record name="collective.themeswitcher.readNetwork" interface="plone.app.theming.interfaces.IThemeSettings" field="readNetwork">
     <field type="plone.registry.field.Bool">
       <default>False</default>
       <description>network_urls_allowed</description>
@@ -142,7 +142,7 @@ you have to add a registry.xml with::
     </field>
     <value>False</value>
   </record>
-  <record name="switcher.rules" interface="plone.app.theming.interfaces.IThemeSettings" field="rules">
+  <record name="collective.themeswitcher.rules" interface="plone.app.theming.interfaces.IThemeSettings" field="rules">
     <field type="plone.registry.field.TextLine">
       <description>rules_file_path</description>
       <required>False</required>

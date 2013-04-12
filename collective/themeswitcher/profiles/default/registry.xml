@@ -4,8 +4,7 @@
     We need to create a separate theme settings record because of
     the cache system used by plone.app.theming
     -->
-    <records interface="plone.app.theming.interfaces.IThemeSettings" prefix="switcher"/>
-
+    <records interface="plone.app.theming.interfaces.IThemeSettings" prefix="collective.themeswitcher"/>
 
     <record name="collective.themeswitcher.theme.mobile">
         <field type="plone.registry.field.ASCIILine">

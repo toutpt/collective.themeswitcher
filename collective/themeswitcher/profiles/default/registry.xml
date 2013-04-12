@@ -1,5 +1,6 @@
 <registry>
 
+    <records interface="plone.app.theming.interfaces.IThemeSettings" prefix="switcher" />
     <record name="collective.themeswitcher.theme.mobile">
         <field type="plone.registry.field.ASCIILine">
             <title>Mobile theme</title>

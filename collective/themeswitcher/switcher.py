@@ -4,6 +4,8 @@ from zope import interface
 from plone.registry.interfaces import IRegistry
 from Products.Five.browser import BrowserView
 from plone.app.theming.utils import getAvailableThemes
+from Products.CMFCore.utils import getToolByName
+from plone.app.theming.interfaces import IThemeSettings
 
 
 class IThemeSwitcher(interface.Interface):
@@ -44,9 +46,15 @@ class RegistryThemeSwitcher(BrowserView):
             self.switcher = component.getMultiAdapter(context, name=name)
 
     def getDefaultSkin(self, old):
+        self.update()
+        if self.switcher is None:
+            return old()
         return self.switcher.getDefaultSkin(old)
 
     def getSettings(self, old):
+        self.update()
+        if self.switcher is None:
+            return old()
         return self.switcher.getSettings(old)
 
 
@@ -71,11 +79,14 @@ class MobileThemeSwitcher(PloneThemeSwitcher):
         self.context = context
         self.request = request
         self._is_mobile = None
+        self.portal_registry = None
+        self.portal_skins = None
+        self.theme = None
 
     def isMobile(self):
         if self._is_mobile is None:
-            if 'HTTP_USER_AGENT' in self.request.META:
-                user_agent = self.request.META['HTTP_USER_AGENT']
+            if 'HTTP_USER_AGENT' in self.request:
+                user_agent = self.request.get('HTTP_USER_AGENT')
                 b = self.reg_b.search(user_agent)
                 v = self.reg_v.search(user_agent[0:4])
                 self._is_mobile = b or v
@@ -86,6 +97,8 @@ class MobileThemeSwitcher(PloneThemeSwitcher):
     def update(self):
         if self.portal_registry is None:
             self.portal_registry = component.queryUtility(IRegistry)
+        if self.portal_skins is None:
+            self.portal_skins = getToolByName(self.context, 'portal_skins')
         if self.theme is None:
             KEY = "collective.themeswitcher.theme.mobile"
             self.theme = self.portal_registry.get(KEY, None)
@@ -96,7 +109,7 @@ class MobileThemeSwitcher(PloneThemeSwitcher):
         self.update()
         if self.theme is None:
             return old()
-        if self.theme not in self.available_skins:
+        if self.theme not in self.portal_skins.getSkinSelections():
             return old()
         return self.theme
 
@@ -108,3 +121,7 @@ class MobileThemeSwitcher(PloneThemeSwitcher):
             return old()
         if self.theme not in getAvailableThemes():
             return old()
+        settings = self.portal_registry.forInterface(IThemeSettings,
+                                                     check=False
+                                                     prefix="switcher")
+        return settings

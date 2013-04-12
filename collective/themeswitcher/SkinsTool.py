@@ -11,4 +11,4 @@ def getDefaultSkin(self):
 
     switcher = component.getMultiAdapter((self, request),
                                          name=u"themeswitcher")
-    return switcher.getDefaultSkin(_old_getDefaultSkin)
+    return switcher.getDefaultSkin(self._old_getDefaultSkin)

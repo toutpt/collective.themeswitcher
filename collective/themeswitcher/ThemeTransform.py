@@ -10,4 +10,4 @@ def getSettings(self):
     switcher = component.getMultiAdapter((context, self.request),
                                          name=u"themeswitcher")
 
-    return switcher.getSettings(_old_getSettings)
+    return switcher.getSettings(self._old_getSettings)

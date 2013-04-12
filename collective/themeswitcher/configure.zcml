@@ -17,14 +17,14 @@
       class="Products.CMFPlone.SkinsTool.SkinsTool"
       original="getDefaultSkin"
       replacement=".SkinsTool.getDefaultSkin"
-      preserveOriginal="True"
+      preserveOriginal="true"
       />
   <monkey:patch
       description="make plone.app.theming.transform.ThemeTransform switchable"
       class="plone.app.theming.transform.ThemeTransform"
       original="getSettings"
       replacement=".ThemeTransform.getSettings"
-      preserveOriginal="True"
+      preserveOriginal="true"
       />
   <genericsetup:registerProfile
       name="default"

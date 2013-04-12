@@ -33,6 +33,22 @@ transform on the Plone rendered page.
 This one is monkeypatched.
 
 
+Switcher
+========
+
+This addon has been designed to easily support new switcher. At the moment
+the only switcher that is implemented is the "mobile switcher"
+based on user agent from http://detectmobilebrowsers.com/ (python version).
+
+Some ideas on switcher that could be easily done:
+
+* switch on domain
+* switch on protocol (http / https)
+* switch on role
+* switch on path
+* switch on device (mobile, tablet, desktop)
+* switch on a cookie value
+
 How to use
 ==========
 

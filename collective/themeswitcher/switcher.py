@@ -39,12 +39,10 @@ class RegistryThemeSwitcher(BrowserView):
         if self.portal_registry is None:
             self.portal_registry = component.queryUtility(IRegistry)
         if self.switcher is None:
-            KEY = "collective.themeswitcher.switcher"
-            default = u"themeswitcher_default"
-            name = self.portal_registry.get(KEY, default)
-            if not name:
-                #don't break even if the value of is None
-                name = default
+            name = u"themeswitcher_default"
+            if self.portal_registry is not None:
+                KEY = "collective.themeswitcher.switcher"
+                name = self.portal_registry.get(KEY, name)
             context = (self.context, self.request)
             self.switcher = component.getMultiAdapter(context, name=name)
 

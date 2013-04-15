@@ -52,5 +52,18 @@
       class=".switcher.MobileThemeSwitcher"
       permission="zope2.View"
       />
+  <browser:page
+      for="*"
+      name="themeswitcher_cookie"
+      class=".switcher.CookieThemeSwitcher"
+      permission="zope2.View"
+      />
+  <browser:page
+      for="*"
+      name="themeswitcher_mobile_cookie"
+      class=".switcher.MobileAndCookieThemeSwitcher"
+      permission="zope2.View"
+      />
+
 
 </configure>

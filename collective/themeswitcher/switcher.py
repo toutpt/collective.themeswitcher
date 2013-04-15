@@ -115,7 +115,7 @@ class MobileThemeSwitcher(PloneThemeSwitcher):
         self._is_mobile = None
 
     def update(self):
-        PloneThemeSwitcher.update(self)
+        super(MobileThemeSwitcher, self).update()
         if self.theme is None and self.isMobile():
             KEY = "collective.themeswitcher.theme.mobile"
             self.theme = self.portal_registry.get(KEY, None)
@@ -130,3 +130,27 @@ class MobileThemeSwitcher(PloneThemeSwitcher):
             else:
                 self._is_mobile = False
         return self._is_mobile
+
+COOKIE_NAME = "themeswitcher_cookie"
+
+
+class CookieThemeSwitcher(PloneThemeSwitcher):
+
+    def __call__(self):
+        self.update()
+        self.request.response.redirect(self.context.absolute_url())
+
+    def update(self):
+        super(CookieThemeSwitcher, self).update()
+        if self.theme is None:
+            themearg = self.request.get('theme', None)
+            if not themearg:
+                self.theme = self.request.cookies.get(COOKIE_NAME, None)
+            elif themearg in self.available_skins\
+                or themearg in self.available_themes:
+                self.request.response.setCookie(COOKIE_NAME, themearg)
+                self.theme = themearg
+
+
+class MobileAndCookieThemeSwitcher(CookieThemeSwitcher, MobileThemeSwitcher):
+    pass

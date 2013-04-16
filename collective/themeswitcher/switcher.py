@@ -1,4 +1,5 @@
 import re
+import logging
 from zope import component
 from zope import interface
 from plone.registry.interfaces import IRegistry
@@ -6,6 +7,8 @@ from Products.Five.browser import BrowserView
 from plone.app.theming.utils import getAvailableThemes
 from Products.CMFCore.utils import getToolByName
 from plone.app.theming.interfaces import IThemeSettings
+
+logger = logging.getLogger("collective.themeswitcher")
 
 
 class IThemeSwitcher(interface.Interface):
@@ -119,6 +122,7 @@ class MobileThemeSwitcher(PloneThemeSwitcher):
         if self.theme is None and self.isMobile():
             KEY = "collective.themeswitcher.theme.mobile"
             self.theme = self.portal_registry.get(KEY, None)
+            logger.info('switch to %s' % self.theme)
 
     def isMobile(self):
         if self._is_mobile is None:
@@ -131,7 +135,7 @@ class MobileThemeSwitcher(PloneThemeSwitcher):
                 self._is_mobile = False
         return self._is_mobile
 
-COOKIE_NAME = "themeswitcher_cookie"
+THEME_KEY = "themeswitcher"
 
 
 class CookieThemeSwitcher(PloneThemeSwitcher):
@@ -143,13 +147,27 @@ class CookieThemeSwitcher(PloneThemeSwitcher):
     def update(self):
         super(CookieThemeSwitcher, self).update()
         if self.theme is None:
-            themearg = self.request.get('theme', None)
-            if not themearg:
-                self.theme = self.request.cookies.get(COOKIE_NAME, None)
-            elif themearg in self.available_skins\
-                or themearg in self.available_themes:
-                self.request.response.setCookie(COOKIE_NAME, themearg)
+            # note that themearg == themecookie if themecookie
+            themearg = self.request.get(THEME_KEY, None)
+            themecookie = self.request.cookies.get(THEME_KEY, None)
+#            if themearg != themecookie:
+#                logger.info('themearg=%s' % themearg)
+#                logger.info('themecookie=%s' % themecookie)
+            if themearg and themecookie and themearg == themecookie:
+                self.theme = themecookie
+            elif themearg and themecookie and themearg != themecookie:
                 self.theme = themearg
+                themecookie = themearg
+                self.setCookie(themearg)
+            elif themearg and not themecookie:
+                self.setCookie(themearg)
+                self.theme = themearg
+                logger.info('set theme to cookie: %s' % self.theme)
+
+    def setCookie(self, value):
+        #change it for future call
+        self.request.cookies[THEME_KEY] = value
+        self.request.response.setCookie(THEME_KEY, value, path='/')
 
 
 class MobileAndCookieThemeSwitcher(CookieThemeSwitcher, MobileThemeSwitcher):

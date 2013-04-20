@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '1.0a1'
+version = '1.0.dev0'
 
 setup(name='collective.themeswitcher',
       version=version,

@@ -155,6 +155,9 @@ you have to add a registry.xml with::
 How to install
 ==============
 
+.. image:: https://secure.travis-ci.org/toutpt/collective.themeswitcher.png
+    :target: http://travis-ci.org/toutpt/collective.themeswitcher
+
 This addon can be installed has any other addons. please follow official
 documentation_
 

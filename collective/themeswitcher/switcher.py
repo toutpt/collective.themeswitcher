@@ -48,16 +48,19 @@ class RegistryThemeSwitcher(BrowserView):
                 name = self.portal_registry.get(KEY, name)
             context = (self.context, self.request)
             self.switcher = component.getMultiAdapter(context, name=name)
+            logger.debug("switcher is now %s" % name)
 
     def getDefaultSkin(self, old):
         self.update()
         if self.switcher is None:
+            logger.debug("no switcher")
             return old()
         return self.switcher.getDefaultSkin(old)
 
     def getSettings(self, old):
         self.update()
         if self.switcher is None:
+            logger.debug("no switcher")
             return old()
         return self.switcher.getSettings(old)
 
@@ -89,16 +92,25 @@ class PloneThemeSwitcher(BrowserView):
     def getDefaultSkin(self, old):
         self.update()
         if self.theme is None:
-            return old()
+            value = old()
+            msg = "getDefaultSkin: no theme defined by the switcher -> %s "
+            logger.debug(msg % value)
+            return value
         if self.theme not in self.available_skins:
-            return old()
+            value = old()
+            msg = "theme not in available skins %s. -> %s"
+            logger.debug(msg % (self.theme, value))
+            return value
+        logger.debug("getDefaultSkin -> %s" % self.theme)
         return self.theme
 
     def getSettings(self, old):
         self.update()
         if self.theme is None:
+            logger.debug("no theme defined by the switcher")
             return old()
         if self.theme not in self.available_themes:
+            logger.debug("theme not in available themes %s" % self.theme)
             return old()
         if self.diazo_settings is None:
             prefix = "collective.themeswitcher"
@@ -106,6 +118,7 @@ class PloneThemeSwitcher(BrowserView):
             self.diazo_settings = forInterface(IThemeSettings,
                                                check=False,
                                                prefix=prefix)
+        logger.debug("getSettings -> custom diazo settings %s" % self.theme)
         return self.diazo_settings
 
 
@@ -122,7 +135,7 @@ class MobileThemeSwitcher(PloneThemeSwitcher):
         if self.theme is None and self.isMobile():
             KEY = "collective.themeswitcher.theme.mobile"
             self.theme = self.portal_registry.get(KEY, None)
-            logger.info('switch to %s' % self.theme)
+            logger.debug('switch to %s' % self.theme)
 
     def isMobile(self):
         if self._is_mobile is None:
@@ -133,6 +146,7 @@ class MobileThemeSwitcher(PloneThemeSwitcher):
                 self._is_mobile = bool(b or v)
             else:
                 self._is_mobile = False
+        logger.debug("is mobile -> %s" % self._is_mobile)
         return self._is_mobile
 
 THEME_KEY = "themeswitcher"
@@ -162,9 +176,9 @@ class CookieThemeSwitcher(PloneThemeSwitcher):
             elif themearg and not themecookie:
                 self.setCookie(themearg)
                 self.theme = themearg
-                logger.info('set theme to cookie: %s' % self.theme)
 
     def setCookie(self, value):
+        logger.debug("set the cookie to %s" % value)
         #change it for future call
         self.request.cookies[THEME_KEY] = value
         self.request.response.setCookie(THEME_KEY, value, path='/')
